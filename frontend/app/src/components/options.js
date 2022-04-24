@@ -4,13 +4,40 @@ import Webcam from "react-webcam";
 export default function Options(){
     const [loc, setloc] = useState(null)
     const [name, setname] = useState('')
+    const [result, setresult] = useState('')
 
-    const _getlocation = () => {
+    
+
+    const _getlocation = (img) => {
         navigator.geolocation.getCurrentPosition(function(position) {
             setloc(position);
             console.log(position);
             _setGeolocation(position);
+            _verifyandtrack(img,position);
         });
+    }
+
+    const _verifyandtrack = (img,location) => {
+      var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+        "name": name,
+        "imageurl":img,
+        "location":{"lat":location.coords.latitude, "lng":location.coords.longitude}
+        });
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        };
+
+        fetch("http://419e-163-118-242-57.ngrok.io/verifyandtrackuser", requestOptions)
+        .then(response => response.json())
+        .then(result => {console.log(result);})
+        .catch(error => console.log('error', error));
     }
 
     const _registerUser = (img) => {
@@ -31,7 +58,7 @@ export default function Options(){
 
         fetch("http://419e-163-118-242-57.ngrok.io/registeruser", requestOptions)
         .then(response => response.json())
-        .then(result => {console.log(result);})
+        .then(res => {console.log(res);setresult(JSON.stringify(res));console.log(result)})
         .catch(error => console.log('error', error));
   }
 
@@ -55,6 +82,9 @@ export default function Options(){
         .then(response => response.json())
         .then(result => {console.log(result); if(action=="register"){
           _registerUser(result.data)
+        }
+        else{
+          _getlocation(result.data)
         }
       })
         .catch(error => console.log('error', error));
@@ -112,6 +142,12 @@ export default function Options(){
         }} >Register</button>
       </div>
     )}</Webcam>
+
+<div class="alert alert-success shadow-lg">
+  <div>
+    <span>{result}</span>
+  </div>
+</div>
         </div>
     )
 }

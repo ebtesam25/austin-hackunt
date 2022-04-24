@@ -5,7 +5,7 @@ export default function Navbar (){
             <a class="btn btn-ghost normal-case text-xl"><img className="object-contain h-5" src="https://austinlane.com/static/48af739d2fbe7bcacba31dbc40d1cf5a/ae9f0/logo.png"></img></a>
         </div>
         <div class="navbar-end">
-            <a class="btn">LOGS</a>
+            <a class="btn" href="#logs">LOGS</a>
         </div>
         </div>
     )
